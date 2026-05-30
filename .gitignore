@@ -46,3 +46,5 @@ app.*.map.json
 
 #custom
 api/
+
+*.g.dart
