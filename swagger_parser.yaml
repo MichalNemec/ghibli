@@ -1,0 +1,12 @@
+# for more information, see https://pub.dev/packages/swagger_parser
+
+swagger_parser:
+  # Sets the url of the OpenApi schema.
+  schema_url: https://ghibliapi.vercel.app/swagger.yaml
+
+  # Required. Sets output directory for generated files (Clients and DTOs).
+  output_directory: lib/api
+
+  # Optional (dart only).
+  # Current available serializers are: json_serializable, freezed, dart_mappable.
+  json_serializer: json_serializable
