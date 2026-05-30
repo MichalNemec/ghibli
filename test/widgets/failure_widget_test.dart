@@ -18,7 +18,9 @@ void main() {
       expect(find.byIcon(Icons.wifi_off), findsOneWidget);
     });
 
-    testWidgets('renders retry button when onRetry is provided', (tester) async {
+    testWidgets('renders retry button when onRetry is provided', (
+      tester,
+    ) async {
       var retried = false;
       await tester.pumpWidget(
         MaterialApp(

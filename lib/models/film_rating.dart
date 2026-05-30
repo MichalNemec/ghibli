@@ -13,7 +13,8 @@ class FilmRating {
   });
 
   ///
-  factory FilmRating.fromJson(Map<String, Object?> json) => _$FilmRatingFromJson(json);
+  factory FilmRating.fromJson(Map<String, Object?> json) =>
+      _$FilmRatingFromJson(json);
 
   ///
   Map<String, Object?> toJson() => _$FilmRatingToJson(this);

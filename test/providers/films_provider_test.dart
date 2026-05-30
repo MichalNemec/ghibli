@@ -69,7 +69,9 @@ void main() {
       final filmB = _makeFilm('2', 'B', '2000');
       final filmA = _makeFilm('1', 'A', '1988');
       final filmC = _makeFilm('3', 'C', '2010');
-      when(mockFilmsClient.getFilms(limit: anyNamed('limit'))).thenAnswer((_) async => [filmB, filmA, filmC]);
+      when(
+        mockFilmsClient.getFilms(limit: anyNamed('limit')),
+      ).thenAnswer((_) async => [filmB, filmA, filmC]);
 
       final container = createContainer();
       addTearDown(container.dispose);
@@ -88,7 +90,9 @@ void main() {
     test('load handles null release dates at end', () async {
       final filmA = _makeFilm('1', 'A', '1988');
       final filmB = _makeFilm('2', 'B', null);
-      when(mockFilmsClient.getFilms(limit: anyNamed('limit'))).thenAnswer((_) async => [filmA, filmB]);
+      when(
+        mockFilmsClient.getFilms(limit: anyNamed('limit')),
+      ).thenAnswer((_) async => [filmA, filmB]);
 
       final container = createContainer();
       addTearDown(container.dispose);
@@ -119,7 +123,9 @@ void main() {
     });
 
     test('cache-once: second load() is no-op', () async {
-      when(mockFilmsClient.getFilms(limit: anyNamed('limit'))).thenAnswer((_) async => [_makeFilm('1', 'A', '2000')]);
+      when(
+        mockFilmsClient.getFilms(limit: anyNamed('limit')),
+      ).thenAnswer((_) async => [_makeFilm('1', 'A', '2000')]);
 
       final container = createContainer();
       addTearDown(container.dispose);

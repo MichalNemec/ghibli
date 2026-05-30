@@ -88,13 +88,17 @@ class _StarRangeSliderState extends State<StarRangeSlider> {
         final w = constraints.maxWidth;
         final segmentWidth = w / maxRating;
 
-        final minCenterX = ((_currentMin - 1) * segmentWidth) + (segmentWidth / 2);
-        final maxCenterX = ((_currentMax - 1) * segmentWidth) + (segmentWidth / 2);
+        final minCenterX =
+            ((_currentMin - 1) * segmentWidth) + (segmentWidth / 2);
+        final maxCenterX =
+            ((_currentMax - 1) * segmentWidth) + (segmentWidth / 2);
 
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onHorizontalDragStart: (details) => _handleTouch(details.localPosition.dx, w),
-          onHorizontalDragUpdate: (details) => _handleTouch(details.localPosition.dx, w),
+          onHorizontalDragStart: (details) =>
+              _handleTouch(details.localPosition.dx, w),
+          onHorizontalDragUpdate: (details) =>
+              _handleTouch(details.localPosition.dx, w),
           onHorizontalDragEnd: (_) {
             _activeThumb = null;
             _dispatchChange();
@@ -120,7 +124,8 @@ class _StarRangeSliderState extends State<StarRangeSlider> {
                     height: 32,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        color: theme.colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
@@ -146,12 +151,15 @@ class _StarRangeSliderState extends State<StarRangeSlider> {
                 Row(
                   children: List.generate(maxRating, (index) {
                     final starValue = index + 1;
-                    final isActive = starValue >= _currentMin && starValue <= _currentMax;
+                    final isActive =
+                        starValue >= _currentMin && starValue <= _currentMax;
 
                     return Expanded(
                       child: Center(
                         child: Icon(
-                          isActive ? Icons.star_rounded : Icons.star_outline_rounded,
+                          isActive
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
                           color: isActive
                               ? ratingColor
                               : theme.colorScheme.onSurfaceVariant.withValues(

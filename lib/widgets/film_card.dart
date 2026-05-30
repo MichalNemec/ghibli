@@ -29,7 +29,8 @@ class FilmCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final color = EColor.hashColor(film.id ?? '');
-    final showOriginal = film.originalTitle != null && film.originalTitle != film.title;
+    final showOriginal =
+        film.originalTitle != null && film.originalTitle != film.title;
     final tc = color.contrastColor;
 
     return InkWell(
@@ -95,7 +96,8 @@ class FilmCard extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  if (film.description != null && film.description!.isNotEmpty) ...[
+                  if (film.description != null &&
+                      film.description!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
                       film.description!,
@@ -112,8 +114,10 @@ class FilmCard extends ConsumerWidget {
                       borderRadius: .circular(24),
                       gradient: LinearGradient(
                         colors: [
-                          Theme.of(context).colorScheme.surfaceContainerHigh.withValues(alpha: 0.20),
-                          Theme.of(context).colorScheme.surfaceContainerHigh.withValues(alpha: 0.35),
+                          Theme.of(context).colorScheme.surfaceContainerHigh
+                              .withValues(alpha: 0.20),
+                          Theme.of(context).colorScheme.surfaceContainerHigh
+                              .withValues(alpha: 0.35),
                         ],
                         begin: .topLeft,
                         end: .bottomRight,

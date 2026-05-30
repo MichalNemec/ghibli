@@ -23,7 +23,8 @@ class BuildInfoRow extends StatelessWidget {
       child: Row(
         spacing: 16,
         children: [
-          for (final e in entries.where((e) => e.value != null)) _InfoRow(label: e.label, value: e.value!),
+          for (final e in entries.where((e) => e.value != null))
+            _InfoRow(label: e.label, value: e.value!),
         ],
       ),
     );

@@ -44,4 +44,9 @@ jobs:
       - run: flutter pub get
       - name: Generate API
         run: bash scripts/generate-api.sh
-      - run: dart format --output=none --set-exit-if-changed lib/ test/
+
+      - name: Format generated API files
+        run: dart format lib/api/ # Clean up the generator's messy code first
+
+      - name: Check code formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/

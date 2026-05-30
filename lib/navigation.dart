@@ -64,7 +64,9 @@ class RouteTracker extends NavigatorObserver {
 void pushOrPopTo<T>(BuildContext context, MaterialPageRoute<T> page) {
   final routeName = page.settings.name;
   final navigator = Navigator.of(context);
-  final tracker = navigator.widget.observers.whereType<RouteTracker>().firstOrNull;
+  final tracker = navigator.widget.observers
+      .whereType<RouteTracker>()
+      .firstOrNull;
 
   if (routeName != null && tracker?.contains(routeName) == true) {
     navigator.popUntil(
