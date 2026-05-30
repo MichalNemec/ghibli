@@ -16,6 +16,8 @@ jobs:
           flutter-version: "3.44.x"
           channel: stable
       - run: flutter pub get
+      - name: Generate API
+        run: bash scripts/generate-api.sh
       - run: dart analyze lib/
 
   test:
@@ -27,6 +29,8 @@ jobs:
           flutter-version: "3.44.x"
           channel: stable
       - run: flutter pub get
+      - name: Generate API
+        run: bash scripts/generate-api.sh
       - run: flutter test --exclude-tags=patrol
 
   format:
@@ -38,4 +42,6 @@ jobs:
           flutter-version: "3.44.x"
           channel: stable
       - run: flutter pub get
+      - name: Generate API
+        run: bash scripts/generate-api.sh
       - run: dart format --output=none --set-exit-if-changed lib/ test/
