@@ -9,23 +9,30 @@ import 'package:seznam_ghibli/providers/species_provider.dart';
 import 'package:seznam_ghibli/providers/vehicles_provider.dart';
 
 /// Current search query string.
-final AutoDisposeStateProvider<String> searchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
+final AutoDisposeStateProvider<String> searchQueryProvider =
+    StateProvider.autoDispose<String>((ref) => '');
 
 /// Keys of favorite films
-final AutoDisposeProvider<Set<String>> favoriteIdSetProvider = Provider.autoDispose<Set<String>>(
-  (ref) => ref.watch(favoritesProvider).keys.toSet(),
-);
+final AutoDisposeProvider<Set<String>> favoriteIdSetProvider =
+    Provider.autoDispose<Set<String>>(
+      (ref) => ref.watch(favoritesProvider).keys.toSet(),
+    );
 
 /// Search results matching the current query across all entity types.
-final AutoDisposeProvider<List<SearchResult>> searchResultsProvider = Provider.autoDispose<List<SearchResult>>((ref) {
+final AutoDisposeProvider<List<SearchResult>>
+searchResultsProvider = Provider.autoDispose<List<SearchResult>>((ref) {
   final query = ref.watch(searchQueryProvider);
   if (query.isEmpty) return [];
 
   final films = ref.watch(filmsProvider.select((s) => s.valueOrNull ?? []));
   final people = ref.watch(peopleProvider.select((s) => s.valueOrNull ?? []));
   final species = ref.watch(speciesProvider.select((s) => s.valueOrNull ?? []));
-  final locations = ref.watch(locationsProvider.select((s) => s.valueOrNull ?? []));
-  final vehicles = ref.watch(vehiclesProvider.select((s) => s.valueOrNull ?? []));
+  final locations = ref.watch(
+    locationsProvider.select((s) => s.valueOrNull ?? []),
+  );
+  final vehicles = ref.watch(
+    vehiclesProvider.select((s) => s.valueOrNull ?? []),
+  );
   final favorites = ref.watch(favoriteIdSetProvider);
 
   final q = query.toLowerCase();

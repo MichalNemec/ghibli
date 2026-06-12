@@ -6,9 +6,10 @@ import 'package:seznam_ghibli/core/failure.dart';
 import 'package:seznam_ghibli/providers/dio_provider.dart';
 
 /// Provider for the vehicles state, backed by [VehiclesNotifier]
-final vehiclesProvider = AsyncNotifierProvider<VehiclesNotifier, List<Vehicles>>(
-  VehiclesNotifier.new,
-);
+final vehiclesProvider =
+    AsyncNotifierProvider<VehiclesNotifier, List<Vehicles>>(
+      VehiclesNotifier.new,
+    );
 
 /// Manages vehicles data, loading from the API and caching the result
 class VehiclesNotifier extends AsyncNotifier<List<Vehicles>> {

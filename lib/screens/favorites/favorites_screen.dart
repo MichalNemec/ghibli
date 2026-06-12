@@ -48,7 +48,9 @@ class FavoritesScreen extends ConsumerWidget {
                   shape: const CircleBorder(),
                   child: Icon(
                     Icons.filter_list,
-                    color: !filterProvider.isDefault ? theme.colorScheme.onPrimaryContainer : null,
+                    color: !filterProvider.isDefault
+                        ? theme.colorScheme.onPrimaryContainer
+                        : null,
                   ),
                 ),
                 builder: (context, rect) {
@@ -78,7 +80,9 @@ class _BuildFilms extends ConsumerWidget {
 
     return filmsState.when(
       data: (films) {
-        final favoriteFilms = films.where((f) => filtered.any((e) => e.key == f.id)).toList();
+        final favoriteFilms = films
+            .where((f) => filtered.any((e) => e.key == f.id))
+            .toList();
         return ListView.builder(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
           itemCount: favoriteFilms.length,

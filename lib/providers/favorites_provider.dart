@@ -9,9 +9,10 @@ import 'package:seznam_ghibli/providers/storage_provider.dart';
 import 'package:seznam_ghibli/storage/favorites_storage.dart';
 
 /// Provider for the favorites state, backed by [FavoritesNotifier]
-final favoritesProvider = NotifierProvider<FavoritesNotifier, Map<String, FilmRating>>(
-  FavoritesNotifier.new,
-);
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, Map<String, FilmRating>>(
+      FavoritesNotifier.new,
+    );
 
 /// Manages favorite films and ratings, persisted via [FavoritesStorage]
 class FavoritesNotifier extends Notifier<Map<String, FilmRating>> {
@@ -19,7 +20,8 @@ class FavoritesNotifier extends Notifier<Map<String, FilmRating>> {
   Map<String, FilmRating> build() {
     try {
       final storage = ref.read(favoritesStorageProvider);
-      return storage.getAll(); // Riverpod handles putting this into AsyncData or AsyncLoading
+      return storage
+          .getAll(); // Riverpod handles putting this into AsyncData or AsyncLoading
     } on Exception catch (_) {
       throw const UnknownFailure('Could not load your favorites.');
     }
@@ -72,7 +74,11 @@ class FavoritesNotifier extends Notifier<Map<String, FilmRating>> {
 /// Filter parameters data class
 class FavoriteFilters {
   ///
-  const FavoriteFilters({required this.minRating, required this.maxRating, this.showUnrated = true});
+  const FavoriteFilters({
+    required this.minRating,
+    required this.maxRating,
+    this.showUnrated = true,
+  });
 
   /// Minimum star rating value.
   final int minRating;
@@ -84,12 +90,17 @@ class FavoriteFilters {
   final bool showUnrated;
 
   /// Returns true if values match defaults
-  bool get isDefault => minRating == kMinRating && maxRating == kMaxRating && showUnrated;
+  bool get isDefault =>
+      minRating == kMinRating && maxRating == kMaxRating && showUnrated;
 }
 
 /// A specialized provider that dynamically exposes filtered favorites.
-final ProviderFamily<List<MapEntry<String, FilmRating>>, FavoriteFilters> filteredFavoritesProvider =
-    Provider.family<List<MapEntry<String, FilmRating>>, FavoriteFilters>((ref, filters) {
+final ProviderFamily<List<MapEntry<String, FilmRating>>, FavoriteFilters>
+filteredFavoritesProvider =
+    Provider.family<List<MapEntry<String, FilmRating>>, FavoriteFilters>((
+      ref,
+      filters,
+    ) {
       // Watch the raw favorites state
       final ratings = ref.watch(favoritesProvider);
 
@@ -100,9 +111,13 @@ final ProviderFamily<List<MapEntry<String, FilmRating>>, FavoriteFilters> filter
       }
 
       // min
-      entries = entries.where((e) => (e.value.rating ?? 0) >= filters.minRating);
+      entries = entries.where(
+        (e) => (e.value.rating ?? 0) >= filters.minRating,
+      );
       // max
-      entries = entries.where((e) => (e.value.rating ?? 0) <= filters.maxRating);
+      entries = entries.where(
+        (e) => (e.value.rating ?? 0) <= filters.maxRating,
+      );
 
       return entries.toList();
     });
@@ -110,9 +125,10 @@ final ProviderFamily<List<MapEntry<String, FilmRating>>, FavoriteFilters> filter
 /// Manages the current filter state for the favorites screen.
 /// Persists across the app lifetime (not autoDispose) so filter
 /// preferences survive navigation.
-final favoritesFilterProvider = NotifierProvider<FavoritesFilterNotifier, FavoriteFilters>(
-  FavoritesFilterNotifier.new,
-);
+final favoritesFilterProvider =
+    NotifierProvider<FavoritesFilterNotifier, FavoriteFilters>(
+      FavoritesFilterNotifier.new,
+    );
 
 /// Notifier that holds the active [FavoriteFilters] state.
 /// Defaults to minRating=1, maxRating=5, showUnrated=true.
@@ -133,13 +149,19 @@ class FavoritesFilterNotifier extends Notifier<FavoriteFilters> {
   bool get showUnrated => state.showUnrated;
 
   /// Updates both the min and max rating bounds simultaneously
-  void setRange(int min, int max) =>
-      state = FavoriteFilters(minRating: min, maxRating: max, showUnrated: state.showUnrated);
+  void setRange(int min, int max) => state = FavoriteFilters(
+    minRating: min,
+    maxRating: max,
+    showUnrated: state.showUnrated,
+  );
 
   /// Toggles whether unrated films are shown in the filtered results
   // ignore: avoid_positional_boolean_parameters
-  void setShowUnrated(bool value) =>
-      state = FavoriteFilters(minRating: state.minRating, maxRating: state.maxRating, showUnrated: value);
+  void setShowUnrated(bool value) => state = FavoriteFilters(
+    minRating: state.minRating,
+    maxRating: state.maxRating,
+    showUnrated: value,
+  );
 
   /// Resets all filters back to their default values
   void reset() => state = const FavoriteFilters(

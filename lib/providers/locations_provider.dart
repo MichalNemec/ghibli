@@ -6,9 +6,10 @@ import 'package:seznam_ghibli/core/failure.dart';
 import 'package:seznam_ghibli/providers/dio_provider.dart';
 
 /// Provider for the locations state, backed by [LocationsNotifier]
-final locationsProvider = AsyncNotifierProvider<LocationsNotifier, List<Locations>>(
-  LocationsNotifier.new,
-);
+final locationsProvider =
+    AsyncNotifierProvider<LocationsNotifier, List<Locations>>(
+      LocationsNotifier.new,
+    );
 
 /// Manages locations data, loading from the API and caching the result
 class LocationsNotifier extends AsyncNotifier<List<Locations>> {

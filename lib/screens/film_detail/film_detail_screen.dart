@@ -107,7 +107,9 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                       state: locationsState,
                       nameOf: (l) => l.name,
                       urlOf: (l) => l.url ?? '',
-                      match: (l) => film.url != null && (l.films ?? []).contains(film.url),
+                      match: (l) =>
+                          film.url != null &&
+                          (l.films ?? []).contains(film.url),
                       onTap: (l) {
                         final lUrl = l.url ?? '';
                         pushOrPopTo(
@@ -166,7 +168,8 @@ class _HeroCard extends StatelessWidget {
     final theme = Theme.of(context);
     final color = EColor.hashColor(film.id ?? '');
     final tc = color.contrastColor;
-    final showOriginal = film.originalTitle != null && film.originalTitle != film.title;
+    final showOriginal =
+        film.originalTitle != null && film.originalTitle != film.title;
 
     return DecoratedBox(
       decoration: BoxDecoration(

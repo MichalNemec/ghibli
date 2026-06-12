@@ -29,7 +29,9 @@ class LocationsDetailScreen extends ConsumerWidget {
       InfoItem(label: 'Terrain', value: location.terrain),
       InfoItem(
         label: 'Surface Water',
-        value: location.surfaceWater != null ? '${location.surfaceWater}%' : null,
+        value: location.surfaceWater != null
+            ? '${location.surfaceWater}%'
+            : null,
       ),
     ];
 

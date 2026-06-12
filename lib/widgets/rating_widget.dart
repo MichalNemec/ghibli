@@ -36,7 +36,8 @@ class RatingWidget extends StatefulWidget {
   State<RatingWidget> createState() => _RatingWidgetState();
 }
 
-class _RatingWidgetState extends State<RatingWidget> with SingleTickerProviderStateMixin {
+class _RatingWidgetState extends State<RatingWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
   bool _isHolding = false;
@@ -91,7 +92,9 @@ class _RatingWidgetState extends State<RatingWidget> with SingleTickerProviderSt
         return AnimatedBuilder(
           animation: _colorAnimation,
           builder: (context, child) {
-            final starColor = filled ? (_isHolding ? _colorAnimation.value! : ratingColor) : Colors.grey;
+            final starColor = filled
+                ? (_isHolding ? _colorAnimation.value! : ratingColor)
+                : Colors.grey;
 
             return GestureDetector(
               key: ValueKey('star_${widget.filmId}_$starIndex'),
@@ -100,7 +103,9 @@ class _RatingWidgetState extends State<RatingWidget> with SingleTickerProviderSt
               onTapCancel: _stopHolding,
 
               // Normal tap selection
-              onTap: widget.onChanged != null ? () => widget.onChanged!(starIndex) : null,
+              onTap: widget.onChanged != null
+                  ? () => widget.onChanged!(starIndex)
+                  : null,
               onLongPress: (_hasRating && widget.onChanged != null)
                   ? () async {
                       await HapticFeedback.mediumImpact();
@@ -143,7 +148,9 @@ class FilmRatingTile extends ConsumerWidget {
         IconButton(
           key: ValueKey('fav_$filmId'),
           icon: Icon(
-            favorite?.isFavorite == true ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            favorite?.isFavorite == true
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
             color: favorite?.isFavorite == true ? Colors.red : null,
           ),
           onPressed: () async {

@@ -119,37 +119,54 @@ class _SearchState extends ConsumerState<_Search> {
     pushOrPopTo(context, _routeForMatch(result));
   }
 
-  MaterialPageRoute<void> _routeForMatch(SearchResult match) => switch (match.type) {
-    EntityType.film => .new(
-      settings: RouteSettings(name: filmsRoute(match.url)),
-      builder: (_) =>
-          FilmDetailScreen(film: ref.read(filmsProvider).valueOrNull!.firstWhere((f) => f.url == match.url)),
-    ),
-    EntityType.people => .new(
-      settings: RouteSettings(name: peopleRoute(match.url)),
-      builder: (_) => PeopleDetailScreen(
-        people: ref.read(peopleProvider).valueOrNull!.firstWhere((p) => p.url == match.url),
-      ),
-    ),
-    EntityType.species => .new(
-      settings: RouteSettings(name: speciesRoute(match.url)),
-      builder: (_) => SpeciesDetailScreen(
-        species: ref.read(speciesProvider).valueOrNull!.firstWhere((s) => s.url == match.url),
-      ),
-    ),
-    EntityType.location => .new(
-      settings: RouteSettings(name: locationsRoute(match.url)),
-      builder: (_) => LocationsDetailScreen(
-        location: ref.read(locationsProvider).valueOrNull!.firstWhere((l) => l.url == match.url),
-      ),
-    ),
-    EntityType.vehicle => .new(
-      settings: RouteSettings(name: vehiclesRoute(match.url)),
-      builder: (_) => VehiclesDetailScreen(
-        vehicle: ref.read(vehiclesProvider).valueOrNull!.firstWhere((v) => v.url == match.url),
-      ),
-    ),
-  };
+  MaterialPageRoute<void> _routeForMatch(SearchResult match) =>
+      switch (match.type) {
+        EntityType.film => .new(
+          settings: RouteSettings(name: filmsRoute(match.url)),
+          builder: (_) => FilmDetailScreen(
+            film: ref
+                .read(filmsProvider)
+                .valueOrNull!
+                .firstWhere((f) => f.url == match.url),
+          ),
+        ),
+        EntityType.people => .new(
+          settings: RouteSettings(name: peopleRoute(match.url)),
+          builder: (_) => PeopleDetailScreen(
+            people: ref
+                .read(peopleProvider)
+                .valueOrNull!
+                .firstWhere((p) => p.url == match.url),
+          ),
+        ),
+        EntityType.species => .new(
+          settings: RouteSettings(name: speciesRoute(match.url)),
+          builder: (_) => SpeciesDetailScreen(
+            species: ref
+                .read(speciesProvider)
+                .valueOrNull!
+                .firstWhere((s) => s.url == match.url),
+          ),
+        ),
+        EntityType.location => .new(
+          settings: RouteSettings(name: locationsRoute(match.url)),
+          builder: (_) => LocationsDetailScreen(
+            location: ref
+                .read(locationsProvider)
+                .valueOrNull!
+                .firstWhere((l) => l.url == match.url),
+          ),
+        ),
+        EntityType.vehicle => .new(
+          settings: RouteSettings(name: vehiclesRoute(match.url)),
+          builder: (_) => VehiclesDetailScreen(
+            vehicle: ref
+                .read(vehiclesProvider)
+                .valueOrNull!
+                .firstWhere((v) => v.url == match.url),
+          ),
+        ),
+      };
 
   @override
   Widget build(BuildContext context) {

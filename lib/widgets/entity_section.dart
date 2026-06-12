@@ -72,7 +72,13 @@ class EntitySection<T> extends StatelessWidget {
               return const Text('None');
             }
 
-            return _BuildData<T>(keys: matchedKeys, icon: icon, nameOf: nameOf, onTap: onTap, matched: matched);
+            return _BuildData<T>(
+              keys: matchedKeys,
+              icon: icon,
+              nameOf: nameOf,
+              onTap: onTap,
+              matched: matched,
+            );
           },
           loading: () => const EntitySkeleton(),
           error: (error, _) => FailureWidget(

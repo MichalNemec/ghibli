@@ -46,14 +46,19 @@ class FavoriteFilterContent extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
-                    Text('Filter by rating', style: theme.textTheme.titleMedium),
+                    Text(
+                      'Filter by rating',
+                      style: theme.textTheme.titleMedium,
+                    ),
                     IconButton(
                       key: const ValueKey('reset_filter'),
                       onPressed: filterProvider.isDefault ? null : filter.reset,
                       icon: Icon(
                         Icons.filter_list_off,
                         color: filterProvider.isDefault
-                            ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3)
+                            ? theme.colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.3,
+                              )
                             : theme.colorScheme.error,
                       ),
                     ),
@@ -65,7 +70,8 @@ class FavoriteFilterContent extends ConsumerWidget {
                   key: const ValueKey('star_range_slider'),
                   min: filterProvider.minRating,
                   max: filterProvider.maxRating,
-                  onChanged: (v) => filter.setRange(v.start.round(), v.end.round()),
+                  onChanged: (v) =>
+                      filter.setRange(v.start.round(), v.end.round()),
                 ),
               ),
               const SizedBox(height: 8),
