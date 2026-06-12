@@ -62,7 +62,7 @@ void main() {
       final container = createContainer();
       addTearDown(container.dispose);
 
-      expect(container.read(filmsProvider), isA<FilmsInitial>());
+      expect(container.read(filmsProvider), isA<AsyncLoading<List<Films>>>());
     });
 
     test('load transitions to FilmsData with sorted films', () async {
@@ -79,8 +79,8 @@ void main() {
       await flush();
 
       final state = container.read(filmsProvider);
-      expect(state, isA<FilmsData>());
-      final films = (state as FilmsData).films;
+      expect(state, isA<AsyncData<List<Films>>>());
+      final films = (state as AsyncData<List<Films>>).value;
       expect(films.length, 3);
       expect(films[0].releaseDate, '1988');
       expect(films[1].releaseDate, '2000');
@@ -99,9 +99,9 @@ void main() {
       container.read(filmsProvider);
       await flush();
 
-      final state = container.read(filmsProvider) as FilmsData;
-      expect(state.films.length, 2);
-      expect(state.films[0].id, '1');
+      final state = container.read(filmsProvider) as AsyncData<List<Films>>;
+      expect(state.value.length, 2);
+      expect(state.value[0].id, '1');
     });
 
     test('load error transitions to FilmsError', () async {
@@ -118,24 +118,8 @@ void main() {
       await flush();
 
       final state = container.read(filmsProvider);
-      expect(state, isA<FilmsError>());
-      expect((state as FilmsError).failure, isA<NetworkFailure>());
-    });
-
-    test('cache-once: second load() is no-op', () async {
-      when(
-        mockFilmsClient.getFilms(limit: anyNamed('limit')),
-      ).thenAnswer((_) async => [_makeFilm('1', 'A', '2000')]);
-
-      final container = createContainer();
-      addTearDown(container.dispose);
-      container.read(filmsProvider);
-      await flush();
-
-      await container.read(filmsProvider.notifier).load();
-      await flush();
-
-      verify(mockFilmsClient.getFilms(limit: anyNamed('limit'))).called(1);
+      expect(state, isA<AsyncError<List<Films>>>());
+      expect((state as AsyncError<List<Films>>).error, isA<NetworkFailure>());
     });
   });
 }

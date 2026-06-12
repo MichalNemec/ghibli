@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/api/export.dart';
@@ -32,19 +30,15 @@ class FilmDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
-  bool _entitiesLoadingTriggered = false;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final film = widget.film;
-    final filmRating = ref.watch(favoritesProvider).ratings[film.id ?? ''];
+    final filmRating = ref.watch(favoritesProvider)[film.id ?? ''];
     final peopleState = ref.watch(peopleProvider);
     final speciesState = ref.watch(speciesProvider);
     final locationsState = ref.watch(locationsProvider);
     final vehiclesState = ref.watch(vehiclesProvider);
-
-    _triggerEntityLoads();
 
     return Scaffold(
       appBar: AppBar(),
@@ -72,7 +66,7 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                       title: 'People',
                       icon: Icons.person,
                       urls: film.people,
-                      state: _peopleToLoadState(peopleState),
+                      state: peopleState,
                       nameOf: (p) => p.name,
                       urlOf: (p) => p.url ?? '',
                       onTap: (p) {
@@ -85,13 +79,13 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                           ),
                         );
                       },
-                      onRetry: () => ref.read(peopleProvider.notifier).load(),
+                      onRetry: () => ref.invalidate(peopleProvider),
                     ),
                     EntitySection<Species>(
                       title: 'Species',
                       icon: Icons.biotech,
                       urls: film.species,
-                      state: _speciesToLoadState(speciesState),
+                      state: speciesState,
                       nameOf: (s) => s.name,
                       urlOf: (s) => s.url ?? '',
                       onTap: (s) {
@@ -104,18 +98,16 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                           ),
                         );
                       },
-                      onRetry: () => ref.read(speciesProvider.notifier).load(),
+                      onRetry: () => ref.invalidate(speciesProvider),
                     ),
                     EntitySection<Locations>(
                       title: 'Locations',
                       icon: Icons.location_on,
                       urls: film.locations,
-                      state: _locationsToLoadState(locationsState),
+                      state: locationsState,
                       nameOf: (l) => l.name,
                       urlOf: (l) => l.url ?? '',
-                      match: (l) =>
-                          film.url != null &&
-                          (l.films ?? []).contains(film.url),
+                      match: (l) => film.url != null && (l.films ?? []).contains(film.url),
                       onTap: (l) {
                         final lUrl = l.url ?? '';
                         pushOrPopTo(
@@ -126,14 +118,13 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                           ),
                         );
                       },
-                      onRetry: () =>
-                          ref.read(locationsProvider.notifier).load(),
+                      onRetry: () => ref.invalidate(locationsProvider),
                     ),
                     EntitySection<Vehicles>(
                       title: 'Vehicles',
                       icon: Icons.directions_car,
                       urls: film.vehicles,
-                      state: _vehiclesToLoadState(vehiclesState),
+                      state: vehiclesState,
                       nameOf: (v) => v.name,
                       urlOf: (v) => v.url ?? '',
                       onTap: (v) {
@@ -146,7 +137,7 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
                           ),
                         );
                       },
-                      onRetry: () => ref.read(vehiclesProvider.notifier).load(),
+                      onRetry: () => ref.invalidate(vehiclesProvider),
                     ),
                   ],
                 ),
@@ -163,58 +154,6 @@ class _FilmDetailScreenState extends ConsumerState<FilmDetailScreen> {
       ),
     );
   }
-
-  void _triggerEntityLoads() {
-    if (_entitiesLoadingTriggered) return;
-    _entitiesLoadingTriggered = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      if (ref.read(peopleProvider) is PeopleInitial) {
-        unawaited(ref.read(peopleProvider.notifier).load());
-      }
-      if (ref.read(speciesProvider) is SpeciesInitial) {
-        unawaited(ref.read(speciesProvider.notifier).load());
-      }
-      if (ref.read(locationsProvider) is LocationsInitial) {
-        unawaited(ref.read(locationsProvider.notifier).load());
-      }
-      if (ref.read(vehiclesProvider) is VehiclesInitial) {
-        unawaited(ref.read(vehiclesProvider.notifier).load());
-      }
-    });
-  }
-
-  EntityLoadState<List<People>> _peopleToLoadState(PeopleState state) {
-    return switch (state) {
-      PeopleInitial() || PeopleLoading() => const EntityLoadInitial(),
-      PeopleData(:final people) => EntityLoadData(people),
-      PeopleError(:final failure) => EntityLoadError(failure),
-    };
-  }
-
-  EntityLoadState<List<Species>> _speciesToLoadState(SpeciesState state) {
-    return switch (state) {
-      SpeciesInitial() || SpeciesLoading() => const EntityLoadInitial(),
-      SpeciesData(:final species) => EntityLoadData(species),
-      SpeciesError(:final failure) => EntityLoadError(failure),
-    };
-  }
-
-  EntityLoadState<List<Locations>> _locationsToLoadState(LocationsState state) {
-    return switch (state) {
-      LocationsInitial() || LocationsLoading() => const EntityLoadInitial(),
-      LocationsData(:final locations) => EntityLoadData(locations),
-      LocationsError(:final failure) => EntityLoadError(failure),
-    };
-  }
-
-  EntityLoadState<List<Vehicles>> _vehiclesToLoadState(VehiclesState state) {
-    return switch (state) {
-      VehiclesInitial() || VehiclesLoading() => const EntityLoadInitial(),
-      VehiclesData(:final vehicles) => EntityLoadData(vehicles),
-      VehiclesError(:final failure) => EntityLoadError(failure),
-    };
-  }
 }
 
 class _HeroCard extends StatelessWidget {
@@ -227,8 +166,7 @@ class _HeroCard extends StatelessWidget {
     final theme = Theme.of(context);
     final color = EColor.hashColor(film.id ?? '');
     final tc = color.contrastColor;
-    final showOriginal =
-        film.originalTitle != null && film.originalTitle != film.title;
+    final showOriginal = film.originalTitle != null && film.originalTitle != film.title;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -391,7 +329,7 @@ class _RatingBar extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: FilmRatingTile(filmId: filmId, filmRating: filmRating),
+        child: FilmRatingTile(filmId: filmId),
       ),
     );
   }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Entity Type for search usage.
+// ignore: public_member_api_docs
+enum EntityType { film, people, species, location, vehicle }
+
 /// A single search result linking a label to a navigable route.
 class SearchResult {
   /// Creates a [SearchResult] with display info and a navigable route.
@@ -7,7 +11,8 @@ class SearchResult {
     required this.label,
     required this.subtitle,
     required this.icon,
-    required this.route,
+    required this.url,
+    required this.type,
     this.favorited = false,
   });
 
@@ -20,8 +25,11 @@ class SearchResult {
   /// Icon representing the entity type.
   final IconData icon;
 
-  /// Route to navigate to when the result is tapped.
-  final MaterialPageRoute<void> Function()? route;
+  /// URL
+  final String url;
+
+  /// Type representing the entity.
+  final EntityType type;
 
   /// Whether the result (film) is in the user's favorites.
   final bool favorited;

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 /// Base class for user-facing error types.
-sealed class Failure {
+sealed class Failure implements Exception {
   const Failure(this.message, this.icon);
 
   /// Maps a [DioException] to the most specific [Failure] subtype.
@@ -42,33 +42,47 @@ sealed class Failure {
     );
   }
 
+  /// A stable name for the failure type that won't break during production obfuscation.
+  String get errorName;
+
   /// Human-readable error description.
   final String message;
 
   /// Icon reflecting the error category.
   final IconData icon;
+
+  @override
+  String toString() => '$errorName: $message';
 }
 
 /// Connection-related failure (timeout, no network).
 class NetworkFailure extends Failure {
   ///
   const NetworkFailure(String message) : super(message, Icons.wifi_off);
+  @override
+  String get errorName => 'NetworkFailure';
 }
 
 /// Server-side failure (5xx status codes).
 class ServerFailure extends Failure {
   ///
   const ServerFailure(String message) : super(message, Icons.cloud_off);
+  @override
+  String get errorName => 'ServerFailure';
 }
 
 /// Resource-not-found failure (404 status code).
 class NotFoundFailure extends Failure {
   ///
   const NotFoundFailure(String message) : super(message, Icons.search_off);
+  @override
+  String get errorName => 'NotFoundFailure';
 }
 
 /// Catch-all for unexpected failures.
 class UnknownFailure extends Failure {
   ///
   const UnknownFailure(String message) : super(message, Icons.error_outline);
+  @override
+  String get errorName => 'UnknownFailure';
 }

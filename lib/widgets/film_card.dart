@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/api/export.dart';
 import 'package:seznam_ghibli/extensions/e_color.dart';
-import 'package:seznam_ghibli/models/film_rating.dart';
 import 'package:seznam_ghibli/widgets/label.dart';
 import 'package:seznam_ghibli/widgets/rating_widget.dart';
 
 /// A tappable card displaying film metadata and a rating tile
-class FilmCard extends ConsumerWidget {
-  /// Creates a card for the given [film] with optional [filmRating] and [onTap]
+class FilmCard extends StatelessWidget {
+  /// Creates a card for the given [film] with [onTap]
   const FilmCard({
     required this.film,
     super.key,
-    this.filmRating,
     this.onTap,
   });
 
   /// The film to display
   final Films film;
 
-  /// The user's rating and favorite status for this film
-  final FilmRating? filmRating;
-
   /// Called when the card is tapped
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = EColor.hashColor(film.id ?? '');
-    final showOriginal =
-        film.originalTitle != null && film.originalTitle != film.title;
+    final showOriginal = film.originalTitle != null && film.originalTitle != film.title;
     final tc = color.contrastColor;
 
     return InkWell(
@@ -96,8 +89,7 @@ class FilmCard extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  if (film.description != null &&
-                      film.description!.isNotEmpty) ...[
+                  if (film.description != null && film.description!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
                       film.description!,
@@ -114,10 +106,8 @@ class FilmCard extends ConsumerWidget {
                       borderRadius: .circular(24),
                       gradient: LinearGradient(
                         colors: [
-                          Theme.of(context).colorScheme.surfaceContainerHigh
-                              .withValues(alpha: 0.20),
-                          Theme.of(context).colorScheme.surfaceContainerHigh
-                              .withValues(alpha: 0.35),
+                          Theme.of(context).colorScheme.surfaceContainerHigh.withValues(alpha: 0.20),
+                          Theme.of(context).colorScheme.surfaceContainerHigh.withValues(alpha: 0.35),
                         ],
                         begin: .topLeft,
                         end: .bottomRight,
@@ -127,7 +117,6 @@ class FilmCard extends ConsumerWidget {
                       padding: const .symmetric(horizontal: 16, vertical: 10),
                       child: FilmRatingTile(
                         filmId: film.id ?? '',
-                        filmRating: filmRating,
                       ),
                     ),
                   ),
@@ -200,9 +189,10 @@ class SkeletonFilmCard extends StatelessWidget {
 
           const Padding(
             padding: .symmetric(vertical: 4, horizontal: 8),
-            child: FilmRatingTile(
-              filmId: '',
-              filmRating: FilmRating(),
+            child: IgnorePointer(
+              child: FilmRatingTile(
+                filmId: '',
+              ),
             ),
           ),
         ],

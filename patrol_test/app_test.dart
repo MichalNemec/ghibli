@@ -116,19 +116,19 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(sharedPreferences),
             favoritesStorageProvider.overrideWithValue(storage),
             filmsProvider.overrideWith(
-              () => FakeFilmsNotifier(const FilmsData([film1, film2, film3])),
+              () => FakeFilmsNotifier(const [film1, film2, film3]),
             ),
             peopleProvider.overrideWith(
-              () => FakePeopleNotifier(const PeopleData([person1])),
+              () => FakePeopleNotifier(const [person1]),
             ),
             speciesProvider.overrideWith(
-              () => FakeSpeciesNotifier(const SpeciesData([])),
+              () => FakeSpeciesNotifier(const []),
             ),
             locationsProvider.overrideWith(
-              () => FakeLocationsNotifier(const LocationsData([])),
+              () => FakeLocationsNotifier(const []),
             ),
             vehiclesProvider.overrideWith(
-              () => FakeVehiclesNotifier(const VehiclesData([])),
+              () => FakeVehiclesNotifier(const []),
             ),
           ],
           child: const GhibliApp(),
@@ -185,7 +185,7 @@ void main() {
       await $(BackButton).tap();
       await $.pumpAndSettle();
 
-      // Step 14 - type search query (debounced 300ms)
+      // Step 14 - type search query (debounced 400ms)
       await $(#search_field).enterText('Totoro');
       await $.pump(const Duration(milliseconds: 400));
 

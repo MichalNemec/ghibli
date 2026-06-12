@@ -4,9 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/models/search_result.dart';
 import 'package:seznam_ghibli/navigation.dart';
+import 'package:seznam_ghibli/providers/films_provider.dart';
+import 'package:seznam_ghibli/providers/locations_provider.dart';
+import 'package:seznam_ghibli/providers/people_provider.dart';
 import 'package:seznam_ghibli/providers/search_provider.dart';
+import 'package:seznam_ghibli/providers/species_provider.dart';
+import 'package:seznam_ghibli/providers/vehicles_provider.dart';
 import 'package:seznam_ghibli/screens/favorites/favorites_screen.dart';
+import 'package:seznam_ghibli/screens/film_detail/film_detail_screen.dart';
 import 'package:seznam_ghibli/screens/films/films_screen.dart';
+import 'package:seznam_ghibli/screens/locations/locations_detail_screen.dart';
+import 'package:seznam_ghibli/screens/people/people_detail_screen.dart';
+import 'package:seznam_ghibli/screens/species/species_detail_screen.dart';
+import 'package:seznam_ghibli/screens/vehicles/vehicles_detail_screen.dart';
 
 /// Root shell
 class MainShell extends StatelessWidget {
@@ -106,8 +116,40 @@ class _SearchState extends ConsumerState<_Search> {
     _focusNode.unfocus();
     _controller.clear();
     ref.read(searchQueryProvider.notifier).state = '';
-    pushOrPopTo(context, result.route!.call());
+    pushOrPopTo(context, _routeForMatch(result));
   }
+
+  MaterialPageRoute<void> _routeForMatch(SearchResult match) => switch (match.type) {
+    EntityType.film => .new(
+      settings: RouteSettings(name: filmsRoute(match.url)),
+      builder: (_) =>
+          FilmDetailScreen(film: ref.read(filmsProvider).valueOrNull!.firstWhere((f) => f.url == match.url)),
+    ),
+    EntityType.people => .new(
+      settings: RouteSettings(name: peopleRoute(match.url)),
+      builder: (_) => PeopleDetailScreen(
+        people: ref.read(peopleProvider).valueOrNull!.firstWhere((p) => p.url == match.url),
+      ),
+    ),
+    EntityType.species => .new(
+      settings: RouteSettings(name: speciesRoute(match.url)),
+      builder: (_) => SpeciesDetailScreen(
+        species: ref.read(speciesProvider).valueOrNull!.firstWhere((s) => s.url == match.url),
+      ),
+    ),
+    EntityType.location => .new(
+      settings: RouteSettings(name: locationsRoute(match.url)),
+      builder: (_) => LocationsDetailScreen(
+        location: ref.read(locationsProvider).valueOrNull!.firstWhere((l) => l.url == match.url),
+      ),
+    ),
+    EntityType.vehicle => .new(
+      settings: RouteSettings(name: vehiclesRoute(match.url)),
+      builder: (_) => VehiclesDetailScreen(
+        vehicle: ref.read(vehiclesProvider).valueOrNull!.firstWhere((v) => v.url == match.url),
+      ),
+    ),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +240,7 @@ class _BuildResultTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         canRequestFocus: false,
-        onTap: result.route == null ? null : () => onTap(result),
+        onTap: () => onTap(result),
         child: Padding(
           padding: const .symmetric(horizontal: 16, vertical: 8),
           child: Row(

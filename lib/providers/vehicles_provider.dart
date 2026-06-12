@@ -5,77 +5,38 @@ import 'package:seznam_ghibli/core/config.dart';
 import 'package:seznam_ghibli/core/failure.dart';
 import 'package:seznam_ghibli/providers/dio_provider.dart';
 
-/// Base state for vehicles data
-sealed class VehiclesState {
-  const VehiclesState(this.vehicles);
-
-  /// Loaded vehicles list
-  final List<Vehicles> vehicles;
-}
-
-/// Vehicles have not been loaded yet
-class VehiclesInitial extends VehiclesState {
-  /// Creates an initial state with no vehicles
-  const VehiclesInitial() : super(const []);
-}
-
-/// Vehicles are currently loading
-class VehiclesLoading extends VehiclesState {
-  /// Creates a loading state with no vehicles
-  const VehiclesLoading() : super(const []);
-}
-
-/// Vehicles have been loaded successfully
-class VehiclesData extends VehiclesState {
-  /// Creates a data state with the given [vehicles]
-  const VehiclesData(super.vehicles);
-}
-
-/// An error occurred while loading vehicles
-class VehiclesError extends VehiclesState {
-  /// Creates an error state with the given [failure] and no vehicles
-  const VehiclesError(this.failure, super.vehicles);
-
-  /// Details about what went wrong
-  final Failure failure;
-}
-
 /// Provider for the vehicles state, backed by [VehiclesNotifier]
-final vehiclesProvider = NotifierProvider<VehiclesNotifier, VehiclesState>(
+final vehiclesProvider = AsyncNotifierProvider<VehiclesNotifier, List<Vehicles>>(
   VehiclesNotifier.new,
 );
 
 /// Manages vehicles data, loading from the API and caching the result
-class VehiclesNotifier extends Notifier<VehiclesState> {
+class VehiclesNotifier extends AsyncNotifier<List<Vehicles>> {
   @override
-  VehiclesState build() {
-    return const VehiclesInitial();
+  Future<List<Vehicles>> build() async {
+    return _fetchVehicles();
   }
 
-  /// Loads vehicles from the API if not already loaded
-  Future<void> load() async {
-    if (state is VehiclesData) return;
-    state = const VehiclesLoading();
+  /// Private helper to fetch data from the API
+  Future<List<Vehicles>> _fetchVehicles() async {
     try {
       final client = ref.read(restClientProvider);
-      final vehicles = await client.vehicles.getVehicles(
-        limit: defaultApiLimit,
-      );
-      state = VehiclesData(vehicles);
+      return await client.vehicles.getVehicles(limit: defaultApiLimit);
     } on DioException catch (e) {
-      state = VehiclesError(Failure.fromDio(e), []);
+      // It is good practice in Riverpod to forward the stackTrace for better debugging
+      throw Failure.fromDio(e);
     }
   }
 }
 
-/// Test helper that returns a fixed [VehiclesState] instead of calling the API
+/// Test helper that returns a fixed List of [Vehicles] instead of calling the API
 class FakeVehiclesNotifier extends VehiclesNotifier {
-  /// Creates a notifier that always returns [mockState]
-  FakeVehiclesNotifier(this.mockState);
+  /// Creates a notifier that always returns [mockData]
+  FakeVehiclesNotifier(this.mockData);
 
   /// The state to return from [build]
-  final VehiclesState mockState;
+  final List<Vehicles> mockData;
 
   @override
-  VehiclesState build() => mockState;
+  Future<List<Vehicles>> build() async => mockData;
 }

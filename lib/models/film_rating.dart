@@ -13,8 +13,7 @@ class FilmRating {
   });
 
   ///
-  factory FilmRating.fromJson(Map<String, Object?> json) =>
-      _$FilmRatingFromJson(json);
+  factory FilmRating.fromJson(Map<String, Object?> json) => _$FilmRatingFromJson(json);
 
   ///
   Map<String, Object?> toJson() => _$FilmRatingToJson(this);
@@ -22,7 +21,7 @@ class FilmRating {
   /// Whether the user has marked this film as a favorite.
   final bool isFavorite;
 
-  /// The user's star rating (1–[maxRating]), or null if unrated
+  /// The user's star rating (1–[kMaxRating]), or null if unrated
   final int? rating;
 
   /// Returns a copy with the given fields replaced.

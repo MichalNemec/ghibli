@@ -1,5 +1,6 @@
 import 'package:cue/cue.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/core/failure.dart';
 import 'package:seznam_ghibli/widgets/failure_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -31,7 +32,7 @@ class EntitySection<T> extends StatelessWidget {
   final List<String>? urls;
 
   /// The current load state of the entity list
-  final EntityLoadState<List<T>> state;
+  final AsyncValue<List<T>> state;
 
   /// Extracts the display name from an entity
   final String? Function(T) nameOf;
@@ -59,44 +60,60 @@ class EntitySection<T> extends StatelessWidget {
       children: [
         SectionHeader(title: title),
         const SizedBox(height: 8),
-        switch (state) {
-          EntityLoadInitial() || EntityLoadLoading() => const EntitySkeleton(),
-          EntityLoadData<List<T>>() => _buildData(
-            context,
-            state as EntityLoadData<List<T>>,
-          ),
-          EntityLoadError() => FailureWidget(
-            failure: (state as EntityLoadError).failure,
+        state.when(
+          data: (data) {
+            final matched = data.where((item) {
+              if (match != null) return match!(item);
+              return urls!.any((u) => u == urlOf(item));
+            }).toList();
+            final matchedKeys = matched.map(urlOf).toList();
+
+            if (matched.isEmpty) {
+              return const Text('None');
+            }
+
+            return _BuildData<T>(keys: matchedKeys, icon: icon, nameOf: nameOf, onTap: onTap, matched: matched);
+          },
+          loading: () => const EntitySkeleton(),
+          error: (error, _) => FailureWidget(
+            failure: error as Failure,
             compact: true,
             onRetry: onRetry,
           ),
-        },
+        ),
         const SizedBox(height: 12),
       ],
     );
   }
+}
 
-  Widget _buildData(BuildContext context, EntityLoadData<List<T>> dataState) {
-    final items = dataState.data;
-    final matched = items.where((item) {
-      if (match != null) return match!(item);
-      return urls!.any((u) => u == urlOf(item));
-    }).toList();
+class _BuildData<T> extends StatelessWidget {
+  const _BuildData({
+    required this.keys,
+    required this.icon,
+    required this.nameOf,
+    required this.onTap,
+    required this.matched,
+  });
 
-    if (matched.isEmpty) {
-      return const Text('None');
-    }
+  final List<String> keys;
+  final IconData icon;
+  final String? Function(T) nameOf;
+  final void Function(T) onTap;
+  final List<T> matched;
 
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
-      height: 230,
+      height: 180,
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(0, 16, 0, 80),
+        padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
         itemCount: matched.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           final m = matched[index];
           return Cue.onScrollVisible(
-            key: ValueKey('es_${m.hashCode}'),
+            key: ValueKey('es_${keys[index]}'),
             acts: const [
               .scale(from: 0.75),
               .fadeIn(),
@@ -111,41 +128,6 @@ class EntitySection<T> extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Base state for an entity load operation
-sealed class EntityLoadState<T> {
-  const EntityLoadState();
-}
-
-/// Entities have not been loaded yet
-class EntityLoadInitial<T> extends EntityLoadState<T> {
-  /// Creates an initial load state
-  const EntityLoadInitial();
-}
-
-/// Entities are currently loading
-class EntityLoadLoading<T> extends EntityLoadState<T> {
-  /// Creates a loading state
-  const EntityLoadLoading();
-}
-
-/// Entities have been loaded successfully
-class EntityLoadData<T> extends EntityLoadState<T> {
-  /// Creates a data state with the given [data]
-  const EntityLoadData(this.data);
-
-  /// The loaded entity list
-  final T data;
-}
-
-/// An error occurred while loading entities
-class EntityLoadError<T> extends EntityLoadState<T> {
-  /// Creates an error state with the given [failure]
-  const EntityLoadError(this.failure);
-
-  /// Details about what went wrong
-  final Failure failure;
 }
 
 /// A tappable card displaying an entity icon and name

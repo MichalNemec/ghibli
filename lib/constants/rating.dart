@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 /// Minimum star rating value.
-const minRating = 1;
+const kMinRating = 1;
 
 /// Maximum star rating value.
-const maxRating = 5;
+const kMaxRating = 5;
 
 /// Static color for rating
 const Color ratingColor = Colors.amber;
 
-/// Validates that [rating] is within [minRating]–[maxRating].
+/// Validates that [rating] is within [kMinRating]–[kMaxRating].
 ///
 /// Throws [RangeError] if out of bounds. Returns the validated value.
 int checkRating(int rating) {
-  if (rating < minRating || rating > maxRating) {
-    throw RangeError.range(rating, minRating, maxRating, 'rating');
+  if (rating < kMinRating || rating > kMaxRating) {
+    throw RangeError.range(rating, kMinRating, kMaxRating, 'rating');
   }
   return rating;
 }

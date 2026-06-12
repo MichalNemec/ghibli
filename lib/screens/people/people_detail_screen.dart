@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/api/export.dart';
@@ -26,8 +24,6 @@ class PeopleDetailScreen extends ConsumerWidget {
     final filmsState = ref.watch(filmsProvider);
     final speciesState = ref.watch(speciesProvider);
 
-    _ensureData(ref);
-
     final infoEntries = <InfoItem>[
       InfoItem(label: 'Gender', value: people.gender),
       InfoItem(label: 'Age', value: people.age),
@@ -50,7 +46,7 @@ class PeopleDetailScreen extends ConsumerWidget {
             ),
             if (infoEntries.any((e) => e.value != null)) ...[
               const SizedBox(height: 24),
-              BuildInfoRow(theme: theme, entries: infoEntries),
+              BuildInfoRow(entries: infoEntries),
             ],
             const SizedBox(height: 20),
             if (people.species != null)
@@ -58,7 +54,7 @@ class PeopleDetailScreen extends ConsumerWidget {
                 title: 'Species',
                 icon: Icons.biotech,
                 urls: [people.species!],
-                state: _speciesToLoadState(speciesState),
+                state: speciesState,
                 nameOf: (s) => s.name,
                 urlOf: (s) => s.url ?? '',
                 onTap: (s) {
@@ -70,13 +66,13 @@ class PeopleDetailScreen extends ConsumerWidget {
                     ),
                   );
                 },
-                onRetry: () => ref.read(speciesProvider.notifier).load(),
+                onRetry: () => ref.invalidate(speciesProvider),
               ),
             EntitySection<Films>(
               title: 'Films',
               icon: Icons.movie,
               urls: people.films,
-              state: _filmsToLoadState(filmsState),
+              state: filmsState,
               nameOf: (f) => f.title,
               urlOf: (f) => f.url ?? '',
               onTap: (f) {
@@ -88,36 +84,11 @@ class PeopleDetailScreen extends ConsumerWidget {
                   ),
                 );
               },
-              onRetry: () => ref.read(filmsProvider.notifier).load(),
+              onRetry: () => ref.invalidate(filmsProvider),
             ),
           ],
         ),
       ),
     );
-  }
-
-  EntityLoadState<List<Species>> _speciesToLoadState(SpeciesState state) {
-    return switch (state) {
-      SpeciesInitial() || SpeciesLoading() => const EntityLoadInitial(),
-      SpeciesData(:final species) => EntityLoadData(species),
-      SpeciesError(:final failure) => EntityLoadError(failure),
-    };
-  }
-
-  EntityLoadState<List<Films>> _filmsToLoadState(FilmsState state) {
-    return switch (state) {
-      FilmsInitial() || FilmsLoading() => const EntityLoadInitial(),
-      FilmsData(:final films) => EntityLoadData(films),
-      FilmsError(:final failure) => EntityLoadError(failure),
-    };
-  }
-}
-
-void _ensureData(WidgetRef ref) {
-  if (ref.read(filmsProvider) is FilmsInitial) {
-    unawaited(ref.read(filmsProvider.notifier).load());
-  }
-  if (ref.read(speciesProvider) is SpeciesInitial) {
-    unawaited(ref.read(speciesProvider.notifier).load());
   }
 }

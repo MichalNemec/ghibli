@@ -3,15 +3,11 @@ import 'package:seznam_ghibli/models/info_item.dart';
 
 /// A horizontal row of [_InfoRow] widgets filtered to non-null values
 class BuildInfoRow extends StatelessWidget {
-  /// Creates an info row with [theme] styling and [entries]
+  /// Creates an info row [entries]
   const BuildInfoRow({
-    required this.theme,
     required this.entries,
     super.key,
   });
-
-  /// The active theme for text styling
-  final ThemeData theme;
 
   /// Info entries to display; those with null values are skipped
   final List<InfoItem> entries;
@@ -23,8 +19,7 @@ class BuildInfoRow extends StatelessWidget {
       child: Row(
         spacing: 16,
         children: [
-          for (final e in entries.where((e) => e.value != null))
-            _InfoRow(label: e.label, value: e.value!),
+          for (final e in entries.where((e) => e.value != null)) _InfoRow(label: e.label, value: e.value!),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:cue/cue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seznam_ghibli/api/export.dart';
+import 'package:seznam_ghibli/core/failure.dart';
 import 'package:seznam_ghibli/models/film_rating.dart';
 import 'package:seznam_ghibli/navigation.dart';
 import 'package:seznam_ghibli/providers/favorites_provider.dart';
@@ -19,19 +20,19 @@ class FilmsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filmsState = ref.watch(filmsProvider);
-    final favorites = ref.watch(favoritesProvider);
+    final favoritesState = ref.watch(favoritesProvider);
 
-    return switch (filmsState) {
-      FilmsInitial() || FilmsLoading() => const _BuildFilmsSkeleton(),
-      FilmsData(:final films) => _BuildFilms(
-        films: films,
-        favorites: favorites.ratings,
+    return filmsState.when(
+      data: (data) => _BuildFilms(
+        films: data,
+        favorites: favoritesState,
       ),
-      FilmsError(:final failure) => FailureWidget(
-        failure: failure,
-        onRetry: () => ref.read(filmsProvider.notifier).load(),
+      loading: () => const _BuildFilmsSkeleton(),
+      error: (error, _) => FailureWidget(
+        failure: error as Failure,
+        onRetry: () => ref.invalidate(filmsProvider),
       ),
-    };
+    );
   }
 }
 
@@ -79,7 +80,6 @@ class _BuildFilms extends StatelessWidget {
             ],
             child: FilmCard(
               film: film,
-              filmRating: favorites[filmId],
               onTap: () {
                 final routeName = filmsRoute(film.url ?? '');
                 pushOrPopTo(
